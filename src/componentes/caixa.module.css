@@ -1,0 +1,126 @@
+.bloco {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.caixa {
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: color-mix(in srgb, var(--painel) 78%, transparent);
+  backdrop-filter: blur(10px);
+  padding: 12px 14px 9px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.caixa:focus-within {
+  border-color: color-mix(in srgb, var(--acento) 60%, var(--borda));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--acento) 12%, transparent);
+}
+
+.campo {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: none;
+  outline: none;
+  resize: none;
+  font-size: 14.5px;
+  line-height: 1.5;
+  /* 3 linhas de teto: além disso a caixa começaria a empurrar o hero. */
+  max-height: 6.6em;
+  field-sizing: content;
+}
+
+.campo::placeholder {
+  color: var(--apagado);
+}
+
+.pe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.marca {
+  font-size: 13px;
+  color: var(--apagado);
+  letter-spacing: 0.06em;
+}
+
+.controles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dica {
+  font-size: 11.5px;
+  color: var(--apagado);
+}
+
+.enviar {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: var(--acento);
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.enviar:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.enviar:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* --- sugestões -------------------------------------------------------- */
+
+.sugestoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.sugestao {
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--item) 60%, transparent);
+  padding: 6px 13px;
+  font-size: 12px;
+  color: var(--fraco);
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.sugestao:hover {
+  color: var(--texto);
+  border-color: color-mix(in srgb, var(--acento) 45%, var(--borda));
+  background: color-mix(in srgb, var(--acento) 12%, transparent);
+}
+
+@media (max-width: 560px) {
+  .dica {
+    display: none;
+  }
+}

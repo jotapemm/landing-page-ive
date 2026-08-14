@@ -1,0 +1,98 @@
+.cabecalho {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: var(--cabecalho);
+  display: flex;
+  align-items: center;
+  /* A transição é só de cor e borda: animar `backdrop-filter` custa caro e
+     pisca em alguns navegadores. */
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.rolou {
+  background: color-mix(in srgb, var(--fundo) 82%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom-color: var(--borda);
+}
+
+.linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  flex: none;
+}
+
+.meio {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.item {
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  font-size: 13.5px;
+  color: var(--fraco);
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+.item:hover:not(:disabled) {
+  color: var(--texto);
+}
+
+.item:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.ativo {
+  color: var(--texto);
+}
+
+.direita {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+
+/*
+ * Abaixo de 900px o menu do meio sai de cena.
+ *
+ * Não é preguiça de fazer o menu sanduíche: hoje ele tem UM link que
+ * funciona (I.V.E, que é uma âncora para a seção logo abaixo) e dois
+ * desabilitados. Uma gaveta para isso seria interface a mais escondendo
+ * conteúdo a menos. Quando Research e Products existirem de verdade, aí
+ * vale o sanduíche.
+ */
+@media (max-width: 900px) {
+  .meio {
+    display: none;
+  }
+}
+
+/* Seletor por posição, e não por `.botao`: em CSS Module o nome da classe
+   global viraria um hash e não casaria com nada. */
+@media (max-width: 560px) {
+  .direita > *:first-child {
+    display: none;
+  }
+}

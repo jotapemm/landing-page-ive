@@ -1,0 +1,281 @@
+/*
+ * Identidade da IDEA.
+ *
+ * Mesma tese do app (ui/src/estilo.css): DUAS cores mandam em tudo e o
+ * resto é mistura entre elas. Se um dia a landing ganhar tema claro, é
+ * trocar --fundo e --texto — nenhuma outra linha muda.
+ *
+ * A diferença pro app é o ACENTO: aqui ele é protagonista (o "I.V.E" e o
+ * "você" roxos do desenho), lá é só cor de sinal.
+ */
+
+:root {
+  /*
+   * O fundo é uma DESCIDA, não uma cor só.
+   *
+   * O topo é azulado — a luz que vem da esfera do hero — e a página vai
+   * escurecendo até quase preto no rodapé. O gradiente cobre a altura do
+   * documento inteiro (ver `body` abaixo), então a escuridão avança
+   * conforme se rola, em vez de ser um brilho parado atrás do conteúdo.
+   *
+   * --fundo continua sendo o tom MÉDIO: é dele que saem, por color-mix,
+   * painel, borda e tons apagados.
+   */
+  --fundo-topo: #191d33;
+  --fundo: #10111c;
+  --fundo-fim: #06060a;
+
+  --texto: #f2f2f7;
+
+  /* roxo da marca — o mesmo #8257f5 que o app já usa em --acento */
+  --acento: #8257f5;
+  --acento-claro: #a08cff;
+
+  --painel: color-mix(in srgb, var(--fundo) 92%, var(--texto));
+  --item: color-mix(in srgb, var(--fundo) 88%, var(--texto));
+  --borda: color-mix(in srgb, var(--fundo) 86%, var(--texto));
+  --fraco: color-mix(in srgb, var(--texto) 66%, var(--fundo));
+  --apagado: color-mix(in srgb, var(--texto) 44%, var(--fundo));
+
+  --logo-frente: var(--texto);
+  --logo-fundo: var(--fundo);
+
+  --raio: 12px;
+  --largura: 1180px;
+
+  /* Altura do cabeçalho fixo. Vira scroll-padding pras âncoras não
+     pararem embaixo dele. */
+  --cabecalho: 68px;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--cabecalho);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/*
+ * O html precisa ter fundo próprio.
+ *
+ * Sem isso o navegador PROPAGA o fundo do body para a tela inteira, e um
+ * gradiente propagado é redimensionado para a viewport — ele repetiria a
+ * cada rolagem em vez de descer uma vez ao longo da página. Com o html
+ * pintado, o body pinta só a própria caixa, que tem a altura do conteúdo.
+ */
+html {
+  background-color: var(--fundo-fim);
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background-image: linear-gradient(
+    180deg,
+    var(--fundo-topo) 0%,
+    #141628 14%,
+    var(--fundo) 42%,
+    #0a0a11 72%,
+    var(--fundo-fim) 100%
+  );
+  background-repeat: no-repeat;
+  color: var(--texto);
+  font-family: var(--fonte-mono), ui-monospace, "SFMono-Regular", monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  /*
+   * SEM `overflow-x: hidden` aqui.
+   *
+   * Ele parece inofensivo, mas transforma o body num contêiner de rolagem
+   * próprio — e aí `position: sticky` dos blocos internos passa a se
+   * ancorar nele em vez de na janela, o que na prática desliga o efeito.
+   * Quem contém o transbordo é cada seção, no `.grude`.
+   */
+}
+
+::selection {
+  background: color-mix(in srgb, var(--acento) 55%, transparent);
+  color: #fff;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* --- esqueleto ------------------------------------------------------- */
+
+.container {
+  width: 100%;
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 20px;
+  }
+}
+
+.secao {
+  position: relative;
+  padding: clamp(80px, 12vw, 160px) 0;
+}
+
+/* --- tipografia ------------------------------------------------------ */
+
+/*
+ * `clamp` no lugar de breakpoints: o título acompanha a viewport de forma
+ * contínua, então não existe largura de tela em que ele fique quebrado.
+ * O terceiro valor é o teto — sem ele, monitor ultrawide vira outdoor.
+ */
+.titulo {
+  font-size: clamp(2.2rem, 6vw, 4.1rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.subtitulo {
+  font-size: clamp(1.15rem, 2.6vw, 1.9rem);
+  font-weight: 400;
+  line-height: 1.38;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.acento {
+  color: var(--acento-claro);
+}
+
+/* A etiqueta ✳ que aparece anotando cada bloco no desenho do Figma. */
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--apagado);
+  margin: 0 0 18px;
+}
+
+.etiqueta::before {
+  content: "✳";
+  color: var(--acento-claro);
+}
+
+/* --- botões ---------------------------------------------------------- */
+
+/*
+ * Os botões do cabeçalho são CLAROS com texto escuro, como no desenho —
+ * invertidos em relação à página. Num fundo desta profundidade é o que os
+ * faz existir; um botão escuro sobre fundo escuro depende da borda para
+ * ser visto, e some.
+ */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: #d8d8e2;
+  color: #14141f;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.botao:hover {
+  background: #ffffff;
+}
+
+.botao:active {
+  transform: translateY(1px);
+}
+
+.botao.forte {
+  background: #f4f4f9;
+  color: #0d0d15;
+}
+
+.botao.forte:hover {
+  background: #ffffff;
+}
+
+.botao:focus-visible,
+a:focus-visible,
+button:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--acento-claro);
+  outline-offset: 2px;
+}
+
+.botao[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* --- aparição no scroll ---------------------------------------------- */
+
+/*
+ * O IntersectionObserver põe .visivel quando o bloco entra na tela. Sem JS
+ * (ou com reduced-motion) o conteúdo tem que aparecer mesmo assim — por
+ * isso o estado escondido vive numa classe que o JS ADICIONA, e não é o
+ * padrão do elemento. Página quebrada nunca esconde texto.
+ */
+.revela {
+  opacity: 0;
+  transform: translateY(28px);
+  /* Um pouco mais lento e com um percurso um pouco maior: a subida fica
+     de assentar, não de piscar. */
+  transition:
+    opacity 1.05s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.05s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--atraso, 0ms);
+}
+
+.revela.visivel {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .revela {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* --- canvas ---------------------------------------------------------- */
+
+.tela {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

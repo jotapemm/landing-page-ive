@@ -1,0 +1,341 @@
+/* --- hero ------------------------------------------------------------ */
+
+.hero {
+  position: relative;
+  /* svh e não vh: no celular, `vh` conta a barra de endereço que some ao
+     rolar, e o hero nasce alto demais e empurra a caixa para fora da tela. */
+  min-height: calc(100svh - var(--cabecalho));
+  padding-top: var(--cabecalho);
+  padding-bottom: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+/*
+ * O palco PRECISA receber ponteiro.
+ *
+ * Ele estava com `pointer-events: none` para "não atrapalhar o texto", e
+ * o efeito custava caro: o canvas nunca recebia `pointermove`, então a
+ * esfera simplesmente não reagia ao mouse. Quem não pode capturar o
+ * ponteiro é a logo por cima — e é lá que a regra vai.
+ */
+.palco {
+  position: relative;
+  height: clamp(330px, 54vh, 560px);
+}
+
+.telaEsfera {
+  position: absolute;
+  inset: 0;
+}
+
+.logoHero {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  /* Deixa o ponteiro atravessar até o canvas: sem isto a logo faria um
+     buraco morto bem no meio da esfera, justamente onde o efeito é mais
+     visível. */
+  pointer-events: none;
+}
+
+.centro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 22px;
+}
+
+.chamada {
+  margin: 0;
+  max-width: 30ch;
+  font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+  line-height: 1.4;
+  letter-spacing: -0.015em;
+  color: var(--fraco);
+}
+
+/* A setinha de "tem mais coisa abaixo". */
+.desce {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 40px;
+  display: grid;
+  place-items: start center;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  padding-top: 8px;
+}
+
+.desce span {
+  width: 2px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--apagado);
+  animation: escorre 1.9s ease-in-out infinite;
+}
+
+@keyframes escorre {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(11px);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desce span {
+    animation: none;
+  }
+}
+
+/* --- quem é I.V.E ---------------------------------------------------- */
+
+/*
+ * As duas seções presas: mais altas que a tela, com o conteúdo em
+ * `sticky`. A altura extra é o "trilho" que a rolagem percorre com o
+ * bloco parado — e é durante ele que as cenas aceleram.
+ *
+ * `overflow` NÃO pode vir aqui: a seção é o pai do sticky, e recortá-la
+ * a tornaria o contêiner de rolagem do filho, matando o efeito. Quem
+ * recorta é o `.grude`, que é o próprio elemento preso.
+ */
+.quem,
+.mundo {
+  position: relative;
+  height: 205vh;
+}
+
+.grude {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* O `.container` é o único filho em fluxo (a galáxia é absoluta). Sem
+   isto ele encolheria para a largura do conteúdo em vez de ocupar a
+   seção. */
+.grude > * {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/*
+ * A galáxia sangra para fora da direita de propósito: cortada, ela sugere
+ * que continua além da tela. Centrada e inteira viraria um adesivo.
+ *
+ * A máscara é o que resolve a borda dura que aparecia no rodapé dela: por
+ * mais rala que a cauda de pontos fique, o canvas ACABA em algum pixel, e
+ * o corte reto entrega o retângulo. O degradê radial dissolve os quatro
+ * lados antes que isso aconteça.
+ */
+.galaxia {
+  position: absolute;
+  top: 50%;
+  right: -18%;
+  width: 86%;
+  height: 150%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(
+    closest-side at 50% 50%,
+    #000 42%,
+    rgba(0, 0, 0, 0.75) 66%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    closest-side at 50% 50%,
+    #000 42%,
+    rgba(0, 0, 0, 0.75) 66%,
+    transparent 100%
+  );
+}
+
+.quemDentro {
+  position: relative;
+  z-index: 1;
+  max-width: 620px;
+}
+
+.frase {
+  margin: 28px 0 0;
+  /* A barra vertical à esquerda é a mesma marcação do desenho no Figma. */
+  border-left: 1px solid color-mix(in srgb, var(--acento) 55%, transparent);
+  padding-left: 22px;
+  color: var(--texto);
+}
+
+@media (max-width: 860px) {
+  .galaxia {
+    width: 165%;
+    right: -42%;
+    opacity: 0.5;
+  }
+  .quemDentro {
+    max-width: none;
+  }
+  /* Trilho mais curto no celular: 205vh de rolagem presa numa tela alta e
+     estreita vira uma espera longa demais. */
+  .quem,
+  .mundo {
+    height: 165vh;
+  }
+}
+
+/* --- como funciona --------------------------------------------------- */
+
+.passos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-top: 54px;
+}
+
+.passo {
+  border: 1px solid var(--borda);
+  border-radius: var(--raio);
+  background: color-mix(in srgb, var(--painel) 55%, transparent);
+  padding: 26px 24px 28px;
+  transition:
+    border-color 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.passo:hover {
+  border-color: color-mix(in srgb, var(--acento) 40%, var(--borda));
+  background: color-mix(in srgb, var(--painel) 85%, transparent);
+}
+
+.numero {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--acento-claro);
+  margin-bottom: 16px;
+}
+
+.passoTitulo {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.passoTexto {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--fraco);
+}
+
+@media (max-width: 860px) {
+  .passos {
+    grid-template-columns: 1fr;
+    margin-top: 38px;
+  }
+}
+
+/* --- a Terra --------------------------------------------------------- */
+
+.mundoGrade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 5vw, 72px);
+  align-items: center;
+  width: 100%;
+}
+
+.mundoTexto {
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * O teto tem que ser de LARGURA, não de altura.
+ *
+ * `max-height` combinado com `justify-self: center` fazia o item encolher
+ * até o conteúdo — e o conteúdo é um canvas posicionado de forma absoluta,
+ * ou seja, nada. O globo colapsava para 0×0. Com `aspect-ratio: 1` limitar
+ * a largura já limita a altura, e o item continua ocupando a coluna.
+ */
+.globo {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+  max-width: min(100%, 74svh);
+  margin-inline: auto;
+  /* O canvas é filho absoluto para o aspect-ratio mandar na altura sem
+     depender de height:100% cascatear por um pai sem altura definida. */
+}
+
+.globo > canvas {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+}
+
+.globo > canvas:active {
+  cursor: grabbing;
+}
+
+.corpo {
+  margin: 22px 0 0;
+  font-size: 1rem;
+  line-height: 1.68;
+  color: var(--fraco);
+  max-width: 46ch;
+}
+
+.rodapeTexto {
+  margin: 26px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--apagado);
+}
+
+.rodapeTexto::before {
+  content: "↻ ";
+  color: var(--acento-claro);
+}
+
+@media (max-width: 860px) {
+  .mundoGrade {
+    grid-template-columns: 1fr;
+  }
+  /* O globo vem primeiro no celular: é a imagem que segura a seção. */
+  .globo {
+    order: -1;
+    max-width: min(100%, 46svh);
+  }
+}
+
+/* --- chamada final --------------------------------------------------- */
+
+.final .centro {
+  gap: 18px;
+}
+
+.final .corpo {
+  max-width: 44ch;
+  text-align: center;
+}
+
+.botaoGrande {
+  margin-top: 12px;
+  padding: 13px 24px;
+  font-size: 14px;
+}
