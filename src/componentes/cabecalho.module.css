@@ -28,14 +28,20 @@
   gap: 20px;
 }
 
+/*
+ * "IDEA." É a marca — não existe símbolo ao lado dela.
+ *
+ * Como agora ela carrega sozinha o papel de identidade, ganhou corpo:
+ * 21px em vez de 15px. E o tracking foi para o negativo, que é o ajuste
+ * de sempre ao subir de tamanho — o espaçamento entre letras que parece
+ * certo em texto corrido parece frouxo num logotipo.
+ */
 .marca {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
   font-weight: 700;
-  font-size: 15px;
-  letter-spacing: 0.01em;
+  font-size: 21px;
+  letter-spacing: -0.02em;
   flex: none;
+  line-height: 1;
 }
 
 .meio {

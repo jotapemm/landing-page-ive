@@ -20,13 +20,14 @@ export function Revela({
   atraso = 0,
   className = "",
   como: Tag = "div",
+  ...resto
 }: {
   children: ReactNode;
   /** Atraso da transição, em ms — para escalonar blocos vizinhos. */
   atraso?: number;
   className?: string;
   como?: ElementType;
-}) {
+} & React.HTMLAttributes<HTMLElement>) {
   const ref = useRef<HTMLElement>(null);
   const [visivel, setVisivel] = useState(false);
 
@@ -51,6 +52,7 @@ export function Revela({
 
   return (
     <Tag
+      {...resto}
       ref={ref}
       className={`revela ${visivel ? "visivel" : ""} ${className}`}
       style={atraso ? ({ "--atraso": `${atraso}ms` } as React.CSSProperties) : undefined}

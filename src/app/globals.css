@@ -204,10 +204,11 @@ select {
   color: #14141f;
   font-size: 13px;
   letter-spacing: 0.01em;
+  overflow: hidden;
   cursor: pointer;
   transition:
-    background-color 0.18s ease,
-    transform 0.18s ease;
+    background-color 0.3s ease,
+    transform 0.3s ease;
 }
 
 .botao:hover {
@@ -219,12 +220,37 @@ select {
 }
 
 .botao.forte {
-  background: #f4f4f9;
-  color: #0d0d15;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--texto);
+  background: var(--fundo-topo);
+  border: 1px solid var(--borda);
+}
+
+.botao.forte::before {
+  content: '';
+  position: absolute;
+  /* Usa as coordenadas capturadas pelo JS ou 50% como padrão */
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 0;
+  height: 0;
+  background: #ffffff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.35s ease, height 0.35s ease;
+  z-index: -1;
+}
+
+.botao.forte:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .botao.forte:hover {
-  background: #ffffff;
+  z-index: 1;
+  color: #0d0d15;
 }
 
 .botao:focus-visible,

@@ -1,6 +1,7 @@
 import { Cabecalho } from "@/componentes/Cabecalho";
 import { CaixaPergunta } from "@/componentes/CaixaPergunta";
 import { LogoIVE } from "@/componentes/Logo";
+import { Passo } from "@/componentes/Passo";
 import { Revela } from "@/componentes/Revela";
 import { Rodape } from "@/componentes/Rodape";
 import { Esfera } from "@/componentes/telas/Esfera";
@@ -8,6 +9,7 @@ import { Galaxia } from "@/componentes/telas/Galaxia";
 import { Terra } from "@/componentes/telas/Terra";
 import { enderecoDoIVE } from "@/lib/ive";
 import css from "./pagina.module.css";
+import { BotaoIVE } from "@/componentes/BotaoIVE";
 
 const PASSOS = [
   {
@@ -55,9 +57,6 @@ export default function Pagina() {
             </Revela>
           </div>
 
-          <a href="#quem" className={css.desce} aria-label="Ir para a próxima seção">
-            <span />
-          </a>
         </section>
 
         {/*
@@ -101,12 +100,20 @@ export default function Pagina() {
             </Revela>
 
             <div className={css.passos}>
+              {/*
+                Só dados atravessam daqui para o <Passo>: strings e um
+                número. Esta página é Server Component, e função não passa
+                pela fronteira — por isso o onMouseMove mora lá dentro,
+                onde já é código de cliente.
+              */}
               {PASSOS.map((p, i) => (
-                <Revela key={p.n} atraso={i * 110} className={css.passo}>
-                  <span className={css.numero}>{p.n}</span>
-                  <h3 className={css.passoTitulo}>{p.titulo}</h3>
-                  <p className={css.passoTexto}>{p.texto}</p>
-                </Revela>
+                <Passo
+                  key={p.n}
+                  n={p.n}
+                  titulo={p.titulo}
+                  texto={p.texto}
+                  atraso={i * 110}
+                />
               ))}
             </div>
           </div>
@@ -147,12 +154,7 @@ export default function Pagina() {
                 Ele responde, mostra o que fez e espera a sua ordem para o
                 resto.
               </p>
-              <a
-                className={`botao forte ${css.botaoGrande}`}
-                href={enderecoDoIVE()}
-              >
-                Teste a I.V.E <span aria-hidden="true">↗</span>
-              </a>
+              <BotaoIVE className={css.botaoGrande}>Teste a I.V.E <span aria-hidden="true">↗</span></BotaoIVE>
             </Revela>
           </div>
         </section>

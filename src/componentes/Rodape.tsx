@@ -1,4 +1,3 @@
-import { LogoMarca } from "./Logo";
 import { enderecoDoIVE } from "@/lib/ive";
 import css from "./rodape.module.css";
 
@@ -31,10 +30,7 @@ export function Rodape() {
     <footer className={css.rodape}>
       <div className={`container ${css.grade}`}>
         <div className={css.marca}>
-          <div className={css.nome}>
-            <LogoMarca tamanho={17} />
-            <span>IDEA.</span>
-          </div>
+          <div className={css.nome}>IDEA.</div>
           <p className={css.linha}>
             Automação de tarefas de escritório, em português.
           </p>

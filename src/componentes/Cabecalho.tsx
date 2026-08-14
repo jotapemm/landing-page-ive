@@ -10,9 +10,9 @@
  */
 
 import { useEffect, useState } from "react";
-import { LogoMarca } from "./Logo";
 import { enderecoDoIVE } from "@/lib/ive";
 import css from "./cabecalho.module.css";
+import { BotaoIVE } from "./BotaoIVE";
 
 /** A partir de quantos px de rolagem o cabeçalho ganha fundo e borda. */
 const LIMIAR = 24;
@@ -32,9 +32,8 @@ export function Cabecalho() {
   return (
     <header className={`${css.cabecalho} ${rolou ? css.rolou : ""}`}>
       <div className={`container ${css.linha}`}>
-        <a href="#topo" className={css.marca} aria-label="IDEA., início">
-          <LogoMarca tamanho={17} />
-          <span>IDEA.</span>
+        <a href="#topo" className={css.marca}>
+          IDEA.
         </a>
 
         <nav className={css.meio}>
@@ -53,16 +52,10 @@ export function Cabecalho() {
           <button className="botao" disabled title="Ainda não existe">
             Entrar <span aria-hidden="true">∨</span>
           </button>
-          <a
-            className="botao forte"
-            href={enderecoDoIVE()}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Teste a I.V.E <span aria-hidden="true">↗</span>
-          </a>
+          <BotaoIVE novaAba>Teste a I.V.E <span aria-hidden="true">↗</span></BotaoIVE>
         </div>
       </div>
     </header>
   );
+
 }

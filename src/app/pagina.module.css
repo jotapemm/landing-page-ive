@@ -59,47 +59,6 @@
   color: var(--fraco);
 }
 
-/* A setinha de "tem mais coisa abaixo". */
-.desce {
-  position: absolute;
-  bottom: 26px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 26px;
-  height: 40px;
-  display: grid;
-  place-items: start center;
-  border: 1px solid var(--borda);
-  border-radius: 999px;
-  padding-top: 8px;
-}
-
-.desce span {
-  width: 2px;
-  height: 7px;
-  border-radius: 2px;
-  background: var(--apagado);
-  animation: escorre 1.9s ease-in-out infinite;
-}
-
-@keyframes escorre {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.35;
-  }
-  50% {
-    transform: translateY(11px);
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .desce span {
-    animation: none;
-  }
-}
-
 /* --- quem é I.V.E ---------------------------------------------------- */
 
 /*
@@ -201,13 +160,15 @@
 .passos {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
+  gap: 10px;
   margin-top: 54px;
 }
 
 .passo {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   border: 1px solid var(--borda);
-  border-radius: var(--raio);
   background: color-mix(in srgb, var(--painel) 55%, transparent);
   padding: 26px 24px 28px;
   transition:
@@ -215,9 +176,34 @@
     background-color 0.25s ease;
 }
 
-.passo:hover {
-  border-color: color-mix(in srgb, var(--acento) 40%, var(--borda));
-  background: color-mix(in srgb, var(--painel) 85%, transparent);
+/*
+ * A onda.
+ *
+ * O tamanho é FIXO e o que anima é a escala. Animar width/height obriga o
+ * navegador a refazer o layout a cada quadro; `transform` é composto na
+ * GPU e não toca em layout nenhum.
+ *
+ * 900px porque a onda nasce onde o cursor entrou, que pode ser um canto —
+ * e daí até o canto oposto é a diagonal do card (~420px). O círculo
+ * precisa de diâmetro para o dobro disso.
+ */
+.passo::before {
+  content: '';
+  position: absolute;
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 900px;
+  height: 900px;
+  border-radius: 50%;
+  background: #ffffff;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.passo:hover::before {
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .numero {
@@ -226,6 +212,7 @@
   letter-spacing: 0.12em;
   color: var(--acento-claro);
   margin-bottom: 16px;
+  transition: color 0.3s ease;
 }
 
 .passoTitulo {
@@ -233,6 +220,7 @@
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+  transition: color 0.3s ease;
 }
 
 .passoTexto {
@@ -240,6 +228,61 @@
   font-size: 13.5px;
   line-height: 1.62;
   color: var(--fraco);
+  transition: color 0.3s ease;
+}
+
+/*
+ * As cores do texto respondem ao HOVER DO CARD, não ao de cada elemento.
+ *
+ * Antes cada filho tinha o próprio `:hover`, e por isso o parágrafo só
+ * escurecia quando o cursor passava exatamente por cima dele — o título
+ * virava e o texto ficava claro, ilegível sobre o branco.
+ *
+ * A onda é do card inteiro; a cor tem que ser do card inteiro também.
+ */
+.passo:hover {
+  border-color: transparent;
+}
+
+/* O título não declara cor própria, então herda esta. */
+.passo:hover {
+  color: #0d0d15;
+}
+
+.passo:hover .numero {
+  color: #5a34cf;
+}
+
+.passo:hover .passoTexto {
+  color: #45455a;
+}
+
+/*
+ * O atraso só na ENTRADA.
+ *
+ * A onda leva 0,5s para varrer o card; a cor mudaria toda de uma vez, e o
+ * texto viraria escuro antes do branco chegar nele. Um empurrãozinho de
+ * 0,12s deixa a onda liderar, e a cor parece consequência dela.
+ *
+ * Na saída não há atraso: a regra mora no `:hover`, então ao tirar o
+ * mouse ela deixa de valer e o texto volta na hora, junto da onda.
+ */
+.passo:hover .numero,
+.passo:hover .passoTitulo,
+.passo:hover .passoTexto {
+  transition-delay: 0.12s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .passo::before,
+  .passo:hover::before {
+    transition: none;
+  }
+  .numero,
+  .passoTitulo,
+  .passoTexto {
+    transition: none;
+  }
 }
 
 @media (max-width: 860px) {

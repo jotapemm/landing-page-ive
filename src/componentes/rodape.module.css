@@ -14,12 +14,12 @@
   max-width: 300px;
 }
 
+/* Mesma marca do cabeçalho, um ponto menor — o rodapé assina, não anuncia. */
 .nome {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
 .linha {

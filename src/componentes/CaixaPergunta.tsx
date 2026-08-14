@@ -62,7 +62,6 @@ export function CaixaPergunta() {
             &gt;.
           </span>
           <div className={css.controles}>
-            <span className={css.dica}>modelo · conversa por voz</span>
             <button
               className={css.enviar}
               onClick={mandar}
