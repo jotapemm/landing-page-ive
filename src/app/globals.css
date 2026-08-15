@@ -30,6 +30,7 @@
   /* roxo da marca — o mesmo #8257f5 que o app já usa em --acento */
   --acento: #8257f5;
   --acento-claro: #a08cff;
+  --acento-escuro: #5c3db0;
 
   --painel: color-mix(in srgb, var(--fundo) 92%, var(--texto));
   --item: color-mix(in srgb, var(--fundo) 88%, var(--texto));
@@ -169,6 +170,32 @@ select {
   color: var(--acento-claro);
 }
 
+/* Cor de fundo de texto com animação de fade-in. */
+.gradient-color {
+  background: linear-gradient(
+    90deg,
+    var(--acento-claro),
+    var(--acento),
+    var(--acento-escuro),
+    var(--acento-claro)
+  );
+
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: colorShift 2s linear infinite;
+}
+
+@keyframes colorShift {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
 /* A etiqueta ✳ que aparece anotando cada bloco no desenho do Figma. */
 .etiqueta {
   display: inline-flex;
@@ -229,7 +256,7 @@ select {
 }
 
 .botao.forte::before {
-  content: '';
+  content: "";
   position: absolute;
   /* Usa as coordenadas capturadas pelo JS ou 50% como padrão */
   top: var(--y, 50%);
@@ -239,7 +266,9 @@ select {
   background: #ffffff;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: width 0.35s ease, height 0.35s ease;
+  transition:
+    width 0.35s ease,
+    height 0.35s ease;
   z-index: -1;
 }
 

@@ -50,8 +50,7 @@ export default function Pagina() {
           <div className="container">
             <Revela className={css.centro} atraso={200}>
               <p className={css.chamada}>
-                Um modelo de IA que trabalha <span className="acento">na sua tela</span>,
-                e não ao lado dela.
+                Um modelo de IA que trabalha <span className="acento gradient-color">na sua tela.</span>
               </p>
               <CaixaPergunta />
             </Revela>
@@ -76,14 +75,14 @@ export default function Pagina() {
               <Revela>
                 <p className="etiqueta">Quem é I.V.E ?</p>
                 <h2 className="titulo">
-                  Quem é <span className="acento">I.V.E</span>?
+                  Quem é <span className="acento gradient-color">I.V.E</span>?
                 </h2>
               </Revela>
 
               <Revela atraso={120}>
                 <p className={`subtitulo ${css.frase}`}>
                   É um modelo de IA capaz, de te mostrar que seu tempo é mais
-                  precioso do que <span className="acento">você</span> mesmo
+                  precioso do que <span className="acento gradient-color">você</span> mesmo
                   imagina.
                 </p>
               </Revela>
@@ -96,7 +95,7 @@ export default function Pagina() {
           <div className="container">
             <Revela>
               <p className="etiqueta">Como funciona</p>
-              <h2 className="titulo">Três passos, e nenhum deles é seu.</h2>
+              <h2 className="titulo gradient-color">Três passos, e nenhum deles é seu.</h2>
             </Revela>
 
             <div className={css.passos}>
