@@ -86,7 +86,8 @@ html {
    * movimento. Sem a animação o degradê congela no ponto inicial, então
    * a identidade fica de pé e só o vaivém sai.
    */
-  .gradient-color {
+  .gradient-color,
+  .botao.claro:hover::before {
     animation: none;
   }
 }
@@ -197,21 +198,47 @@ select {
   color: var(--acento-claro);
 }
 
-/* Cor de fundo de texto com animação de fade-in. */
+/*
+ * Texto pintado por um degradê que corre.
+ *
+ * As três paradas são VARIÁVEIS, e não as cores direto: assim trocar a
+ * paleta é redefinir três valores, sem repetir o `background-clip`, a
+ * animação e o `color: transparent` numa segunda regra que amanhã sai de
+ * sincronia com esta. O roxo é o padrão porque é a marca.
+ */
 .gradient-color {
-  background: linear-gradient(
-    90deg,
-    var(--acento-claro),
-    var(--acento),
-    var(--acento-escuro),
-    var(--acento-claro)
-  );
+  --g1: var(--acento-claro);
+  --g2: var(--acento);
+  --g3: var(--acento-escuro);
+
+  background: linear-gradient(90deg, var(--g1), var(--g2), var(--g3), var(--g1));
 
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   animation: colorShift 2s linear infinite;
+}
+
+/* A paleta branca: mesmo movimento, do branco puro a um cinza azulado. */
+.gradient-branco {
+  --g1: #ffffff;
+  --g2: #d6d6e4;
+  --g3: #9a9ab2;
+}
+
+/*
+ * No hover o texto branco VOLTA pro roxo.
+ *
+ * Repare que a regra só devolve as três variáveis ao valor padrão do
+ * `.gradient-color` — não redeclara o degradê. É o que torna a troca de
+ * paleta uma transição de dados e não de estilo, e é por isso que a
+ * animação não pisca nem reinicia ao passar o mouse.
+ */
+.botao:hover .gradient-color {
+  --g1: var(--acento-claro);
+  --g2: var(--acento);
+  --g3: var(--acento-escuro);
 }
 
 @keyframes colorShift {
@@ -252,11 +279,12 @@ select {
   align-items: center;
   gap: 8px;
   padding: 9px 16px;
-  border: 1px solid transparent;
+  border: none;
   border-radius: 7px;
-  background: #d8d8e2;
+  background: #ffffff;
   color: #14141f;
   font-size: 13px;
+  font-weight: bold;
   letter-spacing: 0.01em;
   overflow: hidden;
   cursor: pointer;
@@ -271,6 +299,95 @@ select {
 
 .botao:active {
   transform: translateY(1px);
+}
+
+/*
+ * `.claro` — branco cheio, e o roxo ENTRA pelo cursor.
+ *
+ * É o círculo do `.forte`, com uma troca: lá ele é branco chapado, aqui
+ * carrega o degradê da marca e o mesmo `colorShift` do texto. Então o
+ * roxo não aparece de estalo — ele inunda o botão a partir do ponto por
+ * onde a mão chegou, e continua correndo enquanto ela ficar.
+ *
+ * O branco do repouso é repetido aqui de propósito, mesmo o `.botao` já
+ * sendo branco hoje: a classe se sustenta sozinha se o botão base mudar
+ * de cor amanhã.
+ *
+ * As três paradas ficam declaradas já no repouso porque `--g1..3`
+ * precisam existir antes de o círculo pedir por elas.
+ */
+.botao.claro {
+  --g1: var(--acento-claro);
+  --g2: var(--acento);
+  --g3: var(--acento-escuro);
+
+  position: relative;
+  isolation: isolate;
+  background: #ffffff;
+  color: #14141f;
+  /* Redeclara a transição inteira: `transition` é uma propriedade só, e
+     escrever de novo aqui descartaria as do `.botao` sem querer. O fundo
+     saiu da lista porque quem preenche agora é o círculo. */
+  transition:
+    color 0.25s ease,
+    transform 0.3s ease;
+}
+
+.botao.claro::before {
+  content: "";
+  position: absolute;
+  /* As coordenadas que o seguirPonteiro escreve; 50% se não houver JS. */
+  top: var(--y, 50%);
+  left: var(--x, 50%);
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background-image: linear-gradient(90deg, var(--g1), var(--g2), var(--g3), var(--g1));
+  background-size: 200% auto;
+  transition:
+    width 0.35s ease,
+    height 0.35s ease;
+  z-index: -1;
+}
+
+/*
+ * Precisa dos dois nomes: `.botao:hover` sozinho já pinta o fundo, e com
+ * a mesma especificidade quem ganharia seria a ordem no arquivo.
+ *
+ * A animação vive AQUI, e não na regra de repouso: fora do hover o
+ * círculo tem 0x0, e animar um elemento invisível é trabalho por quadro
+ * que ninguém vê.
+ */
+.botao.claro:hover {
+  color: #ffffff;
+}
+
+/*
+ * No hover o texto vira branco SÓLIDO — e vira pelo mesmo mecanismo de
+ * sempre: as três paradas do degradê apontando para a mesma cor.
+ *
+ * `color: #ffffff` na regra acima não bastaria: o texto está num span com
+ * `background-clip: text` e `color: transparent`, e cor herdada não
+ * atravessa isso. Um degradê de branco para branco é branco chapado, sem
+ * precisar desfazer o recorte.
+ *
+ * Precisa de `.botao.claro` na frente para ganhar do
+ * `.botao:hover .gradient-color`, que puxaria o roxo de volta. E a
+ * animação é desligada junto: com as três paradas iguais ela não muda
+ * nada na tela, e é repaint por quadro de graça.
+ */
+.botao.claro:hover .gradient-color {
+  --g1: #ffffff;
+  --g2: #ffffff;
+  --g3: #ffffff;
+  animation: none;
+}
+
+.botao.claro:hover::before {
+  width: 300px;
+  height: 300px;
+  animation: colorShift 2s linear infinite;
 }
 
 .botao.forte {

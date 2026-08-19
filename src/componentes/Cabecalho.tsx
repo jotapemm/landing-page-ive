@@ -12,7 +12,7 @@
 import { useEffect, useState } from "react";
 import { enderecoDoIVE } from "@/lib/ive";
 import css from "./cabecalho.module.css";
-import { BotaoIVE } from "./BotaoIVE";
+import { BotaoIVE, seguirPonteiro } from "./BotaoIVE";
 
 /** A partir de quantos px de rolagem o cabeçalho ganha fundo e borda. */
 const LIMIAR = 24;
@@ -55,7 +55,7 @@ export function Cabecalho() {
           propósito: ela é sinal de menu, não palavra.
         */}
         <nav className={css.meio}>
-          <button className={css.item} disabled title="Ainda não existe">
+          <button className={css.item}>
             <span className={`${css.pintado} acento gradient-color`}>
               Pesquisa
             </span>{" "}
@@ -66,7 +66,7 @@ export function Cabecalho() {
               I.V.E
             </span>
           </a>
-          <button className={css.item} disabled title="Ainda não existe">
+          <button className={css.item}>
             <span className={`${css.pintado} acento gradient-color`}>
               Produtos
             </span>{" "}
@@ -74,9 +74,28 @@ export function Cabecalho() {
           </button>
         </nav>
 
+        {/*
+          Os dois botões usam o MESMO degradê roxo, em papéis trocados.
+
+          Os dois têm o círculo que nasce do cursor, e é o mesmo
+          `seguirPonteiro` escrevendo --x/--y nos dois. O que muda é o que
+          o círculo carrega e onde o degradê mora:
+
+          Entrar é `claro` — branco cheio, e o círculo que inunda é o
+          ROXO. O texto não precisa de span: ele só inverte para branco
+          junto com a setinha.
+
+          "Teste a I.V.E" é `forte` — fundo escuro e o círculo é BRANCO,
+          então ali o degradê está no TEXTO, que vai de branco a roxo
+          quando o círculo chega. O span dele mora dentro do componente,
+          para as duas aparições do botão (aqui e no fim da página)
+          ficarem iguais sem repetir marcação.
+        */}
         <div className={css.direita}>
-          <button className="botao" disabled title="Ainda não existe">
-            Entrar <span aria-hidden="true">∨</span>
+          <button className="botao claro" onMouseMove={seguirPonteiro}>
+            <span className="gradient-color">
+              Entrar <span aria-hidden="true">∨</span>
+            </span>
           </button>
           <BotaoIVE novaAba>Teste a I.V.E <span aria-hidden="true">↗</span></BotaoIVE>
         </div>
