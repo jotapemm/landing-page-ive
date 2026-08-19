@@ -83,6 +83,23 @@
   color: var(--texto);
 }
 
+/*
+ * O realce do hover, para os itens que levam o gradiente por dentro.
+ *
+ * Não pode ser `color`: a palavra está pintada num <span> com
+ * `background-clip: text`, e cor opaca no pai não muda nada enquanto cor
+ * opaca no próprio span apagaria o degradê inteiro. Brilho dá a mesma
+ * leitura de "isto responde ao mouse" sem desmanchar a pintura.
+ *
+ * Já o `opacity: 0.55` dos desabilitados não precisou de nada: opacidade
+ * atravessa o `background-clip` sem briga, então Pesquisa e Produtos
+ * seguem visivelmente apagados ao lado do I.V.E — que é o único dos três
+ * que leva a algum lugar.
+ */
+.item:hover:not(:disabled) .pintado {
+  filter: brightness(1.3);
+}
+
 .direita {
   display: flex;
   align-items: center;

@@ -76,10 +76,19 @@
   height: 205vh;
 }
 
+/*
+ * O bloco preso começa ABAIXO do cabeçalho, e não colado no topo.
+ *
+ * Com `top: 0` o conteúdo se centrava na tela inteira, incluindo os 68px
+ * que o cabeçalho fixo ocupa — na prática ele ficava alto demais, com o
+ * título quase encostando na barra. Descontando a altura do cabeçalho nos
+ * dois lugares (onde gruda e quanto mede), a seção passa a se centrar no
+ * espaço que sobra, que é o espaço que a pessoa realmente vê.
+ */
 .grude {
   position: sticky;
-  top: 0;
-  height: 100svh;
+  top: var(--cabecalho);
+  height: calc(100svh - var(--cabecalho));
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -94,20 +103,35 @@
 }
 
 /*
- * A galáxia sangra para fora da direita de propósito: cortada, ela sugere
- * que continua além da tela. Centrada e inteira viraria um adesivo.
+ * O buraco negro sangra para fora da direita de propósito: cortado, ele
+ * sugere que continua além da tela. Centrado e inteiro viraria um adesivo.
  *
- * A máscara é o que resolve a borda dura que aparecia no rodapé dela: por
- * mais rala que a cauda de pontos fique, o canvas ACABA em algum pixel, e
- * o corte reto entrega o retângulo. O degradê radial dissolve os quatro
- * lados antes que isso aconteça.
+ * A máscara é o que resolve a borda dura do canvas: por mais rala que a
+ * ponta do disco fique, o retângulo ACABA em algum pixel, e o corte reto
+ * entrega que ali tem uma caixa. O degradê radial dissolve os quatro lados
+ * antes que isso aconteça — e aqui ele ganhou um segundo emprego, que é
+ * apagar a ponta do disco no lado onde o texto passa por cima.
  */
-.galaxia {
+/*
+ * A altura era 150% e virou 120% por uma razão medida, não estética.
+ *
+ * Com 150% o canvas descia até 1604px, e com a página no TOPO ele já
+ * invadia 94px da dobra — o `IntersectionObserver` ligava a cena, e o
+ * usuário pagava o buraco negro inteiro enquanto olhava o cabeçalho, por
+ * cima da esfera do hero. Duas cenas no mesmo quadro estouravam os
+ * 16,7 ms.
+ *
+ * 120% tira o canvas da dobra e ainda corta 21% do buffer a limpar. E
+ * não recorta nada: o desenho precisa de 337px de meia-altura (o arco
+ * externo a 1,95 sombras mais o que o giro no plano da tela empurra as
+ * pontas), e sobram 391px.
+ */
+.buracoNegro {
   position: absolute;
   top: 50%;
   right: -18%;
   width: 86%;
-  height: 150%;
+  height: 120%;
   transform: translateY(-50%);
   pointer-events: none;
   -webkit-mask-image: radial-gradient(
@@ -139,7 +163,7 @@
 }
 
 @media (max-width: 860px) {
-  .galaxia {
+  .buracoNegro {
     width: 165%;
     right: -42%;
     opacity: 0.5;

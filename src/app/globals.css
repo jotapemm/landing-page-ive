@@ -11,19 +11,24 @@
 
 :root {
   /*
-   * O fundo é uma DESCIDA, não uma cor só.
-   *
-   * O topo é azulado — a luz que vem da esfera do hero — e a página vai
-   * escurecendo até quase preto no rodapé. O gradiente cobre a altura do
+   * O fundo é uma DESCIDA, não uma cor só. O gradiente cobre a altura do
    * documento inteiro (ver `body` abaixo), então a escuridão avança
    * conforme se rola, em vez de ser um brilho parado atrás do conteúdo.
    *
    * --fundo continua sendo o tom MÉDIO: é dele que saem, por color-mix,
    * painel, borda e tons apagados.
+   *
+   * O topo já foi azulado — luz da esfera do hero rebatendo na página.
+   * Caiu quando o buraco negro entrou na seção do meio: azul e laranja
+   * são complementares, e o fundo levantado roubava contraste justo onde
+   * a matéria precisa queimar. Agora a descida vai de quase preto a preto
+   * puro, e a única luz da página é a que as telas emitem.
    */
-  --fundo-topo: #191d33;
-  --fundo: #10111c;
-  --fundo-fim: #06060a;
+  --fundo-topo: #08080e;
+  --fundo-alto: #05050a;
+  --fundo: #030306;
+  --fundo-baixo: #010103;
+  --fundo-fim: #000000;
 
   --texto: #f2f2f7;
 
@@ -32,9 +37,16 @@
   --acento-claro: #a08cff;
   --acento-escuro: #5c3db0;
 
-  --painel: color-mix(in srgb, var(--fundo) 92%, var(--texto));
-  --item: color-mix(in srgb, var(--fundo) 88%, var(--texto));
-  --borda: color-mix(in srgb, var(--fundo) 86%, var(--texto));
+  /*
+   * As proporções são mais generosas com o texto do que pareceria natural
+   * — 84/78/74 e não 92/88/86. Num fundo quase preto a mistura antiga
+   * sumia: painel, item e borda viravam preto também, e as caixas da
+   * página deixavam de existir. É a única correção que a descida ao preto
+   * exigiu; o resto do sistema seguiu igual.
+   */
+  --painel: color-mix(in srgb, var(--fundo) 84%, var(--texto));
+  --item: color-mix(in srgb, var(--fundo) 78%, var(--texto));
+  --borda: color-mix(in srgb, var(--fundo) 74%, var(--texto));
   --fraco: color-mix(in srgb, var(--texto) 66%, var(--fundo));
   --apagado: color-mix(in srgb, var(--texto) 44%, var(--fundo));
 
@@ -64,6 +76,19 @@ html {
   html {
     scroll-behavior: auto;
   }
+
+  /*
+   * O gradiente PARA, mas continua roxo.
+   *
+   * Ele passou a pintar a marca e o menu inteiro do cabeçalho, e não mais
+   * duas palavras soltas no corpo do texto — cor em movimento perpétuo no
+   * topo da página é justamente o que incomoda quem pediu menos
+   * movimento. Sem a animação o degradê congela no ponto inicial, então
+   * a identidade fica de pé e só o vaivém sai.
+   */
+  .gradient-color {
+    animation: none;
+  }
 }
 
 /*
@@ -81,12 +106,14 @@ html {
 body {
   margin: 0;
   min-height: 100svh;
+  /* As cinco paradas são TODAS variáveis: é o que permite ao tema escuro
+     trocar a descida inteira sem reescrever o gradiente. */
   background-image: linear-gradient(
     180deg,
     var(--fundo-topo) 0%,
-    #141628 14%,
+    var(--fundo-alto) 14%,
     var(--fundo) 42%,
-    #0a0a11 72%,
+    var(--fundo-baixo) 72%,
     var(--fundo-fim) 100%
   );
   background-repeat: no-repeat;

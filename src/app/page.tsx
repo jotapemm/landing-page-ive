@@ -5,7 +5,7 @@ import { Passo } from "@/componentes/Passo";
 import { Revela } from "@/componentes/Revela";
 import { Rodape } from "@/componentes/Rodape";
 import { Esfera } from "@/componentes/telas/Esfera";
-import { Galaxia } from "@/componentes/telas/Galaxia";
+import { BuracoNegro } from "@/componentes/telas/BuracoNegro";
 import { Terra } from "@/componentes/telas/Terra";
 import { enderecoDoIVE } from "@/lib/ive";
 import css from "./pagina.module.css";
@@ -61,14 +61,14 @@ export default function Pagina() {
         {/*
           --- quem é ---------------------------------------------------
           A seção é mais alta que a tela e o conteúdo dentro dela é
-          `sticky`. O texto e a galáxia ficam PRESOS no lugar enquanto a
-          rolagem atravessa a altura extra — e é durante essa travessia
-          que a galáxia acelera. Depois o bloco solta e a página segue.
+          `sticky`. O texto e o buraco negro ficam PRESOS no lugar enquanto
+          a rolagem atravessa a altura extra — e é durante essa travessia
+          que o disco acelera. Depois o bloco solta e a página segue.
         */}
         <section className={css.quem} id="quem">
           <div className={css.grude}>
-            <div className={css.galaxia} aria-hidden="true">
-              <Galaxia />
+            <div className={css.buracoNegro} aria-hidden="true">
+              <BuracoNegro />
             </div>
 
             <div className={`container ${css.quemDentro}`}>

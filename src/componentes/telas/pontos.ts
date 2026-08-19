@@ -10,9 +10,17 @@
  *
  * Duas decisões de desempenho que não são óbvias:
  *
- * 1. O gargalo de um canvas com milhares de pontos NÃO é o número de
- *    pontos — é a troca de `fillStyle`. Trocar 14.000 vezes por quadro
- *    derruba o frame rate; agrupar em 7 baldes de opacidade faz 7 trocas.
+ * 1. São DOIS gargalos, e o segundo só aparece depois de resolver o
+ *    primeiro.
+ *
+ *    O primeiro é a troca de `fillStyle`: 14.000 trocas por quadro
+ *    derrubam o frame rate, e agrupar em 7 baldes de opacidade faz 7.
+ *
+ *    Com isso resolvido, o que sobra custando é a CHAMADA de desenho, a
+ *    ~1 ms por mil — aí sim o número de pontos manda. A saída é o mesmo
+ *    truque um nível acima: os retângulos de cada balde entram num
+ *    Path2D e são pintados de uma vez. Ver `Baldes.pintar`, que traz os
+ *    números medidos.
  *
  * 2. A página tem três telas e só uma aparece por vez. Sem o
  *    IntersectionObserver as três ficariam girando o tempo todo, e o
@@ -122,16 +130,42 @@ export class Baldes {
     this.listas[i].push(x, y, tam);
   }
 
-  /** `cor` em "r,g,b" — o alpha sai do balde. */
+  /**
+   * `cor` em "r,g,b" — o alpha sai do balde.
+   *
+   * Os retângulos do balde entram num Path2D e são pintados de UMA vez,
+   * em vez de um `fillRect` por ponto. Medido nesta máquina, com 49.500
+   * pontos num buffer de 1088x978:
+   *
+   *   fillRect por ponto ......... 33,6 ms
+   *   Path2D em 6 preenchimentos . 13,3 ms
+   *
+   * O orçamento de 60fps é 16,7 ms, então isto é a diferença entre a
+   * cena caber no quadro e não caber. E o gargalo não era o que o
+   * comentário do topo deste arquivo dizia: trocar `fillStyle` já estava
+   * resolvido pelos baldes; o que sobrou custando foi a CHAMADA, a ~1 ms
+   * por mil. Medimos também `lighter` contra `source-over` e coordenada
+   * inteira contra fracionária — nenhum dos dois muda nada.
+   *
+   * Uma diferença de comportamento, pequena mas real: dois pontos do
+   * MESMO balde que se sobreponham agora somam uma vez só, porque um
+   * `fill` de caminho pinta a união da região. Entre baldes diferentes
+   * eles continuam somando, que é de onde vem quase todo o estouro para
+   * o branco — são seis baldes, e a maioria das sobreposições cai em
+   * dois deles. Na prática o brilho dos aglomerados fica um tico menos
+   * saturado.
+   */
   pintar(ctx: CanvasRenderingContext2D, cor = "252,252,252", teto = 0.95) {
     for (let b = 1; b < BALDES; b++) {
       const lista = this.listas[b];
       if (!lista.length) continue;
-      ctx.fillStyle = `rgba(${cor},${(b / (BALDES - 1)) * teto})`;
+      const caminho = new Path2D();
       for (let i = 0; i < lista.length; i += 3) {
         const s = lista[i + 2];
-        ctx.fillRect(lista[i], lista[i + 1], s, s);
+        caminho.rect(lista[i], lista[i + 1], s, s);
       }
+      ctx.fillStyle = `rgba(${cor},${(b / (BALDES - 1)) * teto})`;
+      ctx.fill(caminho);
     }
   }
 }
@@ -363,7 +397,22 @@ export function useTela(fabrica: (ponteiro: Ponteiro) => Cena) {
           cancelAnimationFrame(quadro);
         }
       },
-      { rootMargin: "120px" },
+      /*
+       * Sem margem de antecipação, e isso foi medido.
+       *
+       * Com 120px, a tela do buraco negro acendia com a página ainda no
+       * TOPO — ela começa 4px abaixo da dobra, dentro da margem. O
+       * usuário pagava aquela cena inteira enquanto olhava o cabeçalho,
+       * somada à esfera do hero, e as duas juntas estouravam o quadro.
+       *
+       * A margem existia pra cena já estar rodando quando aparecesse,
+       * sem "começo" visível. Custou pouco tirar: cada cena tem a
+       * própria entrada de ~1,6 s, que só acontece na primeira vez (o
+       * relógio é acumulado e não zera ao sair de vista). Então o que se
+       * perde são 120px de antecipação numa animação que já era feita
+       * pra ser vista nascendo.
+       */
+      { rootMargin: "0px" },
     );
     io.observe(cv);
 

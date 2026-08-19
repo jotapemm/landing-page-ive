@@ -37,7 +37,9 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f0f16",
+  // Acompanha o --fundo-topo do globals.css: é a cor que o navegador do
+  // celular pinta na própria barra, e destoar dela entrega uma emenda.
+  themeColor: "#08080e",
 };
 
 export default function RootLayout({
